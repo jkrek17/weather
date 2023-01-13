@@ -1,0 +1,87 @@
+<html>
+    <head>
+        <title>Leaflet Map and Table</title>
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+        crossorigin=""/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.js"></script>
+        <style>
+            #map {
+                width: 600px;
+                height: 400px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <div id="data-table"></div>
+        <script>
+            let start_string = "20200217000000";
+            let end_string = "20200217010000";
+            let url = "https://mesonet.agron.iastate.edu/geojson/lsr.php?sts=" + start_string + "&ets=" + end_string + "&wfos=&callback=gotData";
+            fetch(url)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    // Create a div element for the map
+                    var mapDiv = document.createElement('div');
+                    mapDiv.id = 'map';
+                    document.body.appendChild(mapDiv);
+                    
+                    // Create a div element for the table
+                    var tableDiv = document.createElement('div');
+                    tableDiv.id = 'data-table';
+                    document.body.appendChild(tableDiv);
+                    
+                    // Create a table element 
+                    var table = document.createElement('table');
+                    table.setAttribute('border', '1');
+                    tableDiv.appendChild(table);
+                    
+                    // Create the table header
+                    var th = document.createElement('th');
+                    th.innerHTML = 'City, Event Type, Magnitude, Valid Time';
+                    table.appendChild(th);
+                    
+                    // Create an array to store lat/longs
+                    var reports = [];
+                    
+                    // Loop through data and create table rows
+                    data.features.forEach((feature) => {
+                        var report = {};
+                        var tr = document.createElement('tr');
+                        tr.innerHTML = 
+                            "<td>" + feature.properties.city + "</td>" +
+                            "<td>" + feature.properties.typetext + "</td>" +
+                            "<td>" + feature.properties.magnitude + "</td>" +
+                            "<td>" + feature.properties.valid + "</td>";
+                        table.appendChild(tr);
+                        popText = "<pre>" + feature.properties.city + "\n" + feature.properties.typetext + "\n" + feature.properties.magnitude + "</pre>" ;
+                        report.city = feature.properties.city;
+                        report.type = feature.properties.typetext;
+                        report.mag = feature.properties.magnitude;
+                        report.valid = feature.properties.valid;
+                        report.location =  [feature.geometry.coordinates[1],feature.geometry.coordinates[0]];
+                        report.text = popText;
+                        console.log(report);
+                        reports.push(report);
+                    });
+                    
+                    // Create Leaflet map
+                    var map = L.map('map').setView([45, -100], 4);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+
+                    var bounds = L.latLngBounds();
+                    console.log(reports);
+                    reports.forEach((property) => {
+                        console.log(property.city);
+                        L.marker(property.location).bindPopup(property.text).addTo(map);
+                    });
+                });
+        </script>
+    </body>
+</html>
