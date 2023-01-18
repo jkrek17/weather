@@ -1,11 +1,5 @@
 
 
-var map = L.map('map').setView([40, -95], 5);
-
-L.mapboxGL({
-    accessToken: 'pk.eyJ1IjoiamtyZWsxNyIsImEiOiJjaW8xNDBvcDMxYTZjdHRtM3FwMXVuc244In0.aPQDlTL5GY_0BOe9TDTM8Q',
-    style: 'mapbox://styles/jkrek17/cld15kb09000o01sh6bi91glg'
-}).addTo(map);
 
 var Rlayer = new L.LayerGroup();
 
@@ -50,7 +44,7 @@ function changeImage() {
     radarLayers.map(function(layer) {
         layer.setOpacity(0)
     });
-    radarLayers[x].setOpacity(opacity);
+    radarLayers[x].setOpacity(0.5);
     currentTime = timeArray[x];
     displayT = displayTime[x];
     //var formattedDate = date.toLocaleString();
@@ -141,5 +135,8 @@ var RadarControl = L.Control.extend({
 });
 
 var radarControl = new RadarControl(map);
+radarControl.setPosition('bottomleft');
 map.addControl(radarControl);
+
+
 

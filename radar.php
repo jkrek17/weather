@@ -9,6 +9,8 @@
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.css' rel='stylesheet' />
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.js'></script>
     <script src="https://unpkg.com/mapbox-gl-leaflet/leaflet-mapbox-gl.js"></script>
+    <script src="NFL/createIcons.js"></script>
+
 
 
 
@@ -22,7 +24,16 @@
 
 <body>
     <div id="map" style="height: 100vh;"></div>
+    <script>
+        var map = L.map('map').setView([40, -95], 5);
+
+        L.mapboxGL({
+            accessToken: 'pk.eyJ1IjoiamtyZWsxNyIsImEiOiJjaW8xNDBvcDMxYTZjdHRtM3FwMXVuc244In0.aPQDlTL5GY_0BOe9TDTM8Q',
+            style: 'mapbox://styles/jkrek17/cld15kb09000o01sh6bi91glg'
+        }).addTo(map);
+    </script>
     <script src="radarControl.js"></script>
+    <script src="NFL/nflSites.js"></script>
     <script>
         //run on page ready
         $(document).ready(function() {
