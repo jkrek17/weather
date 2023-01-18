@@ -21,13 +21,17 @@ echo '</style>';
 
 $url = 'https://ocean.weather.gov/shtml/NFDHSFAT1.php';
 $data = file_get_contents($url);
-$gale_count = preg_match_all('/GALE WARNING/i', $data, $matches);
+$gale_count = preg_match_all('/GALE WARNING/', $data, $matches);
 
-$storm_count = preg_match_all('/STORM WARNING/i', $data, $matches);
+$storm_count = preg_match_all('/STORM WARNING/', $data, $matches);
 
-$hf_count = preg_match_all('/HURRICANE FORCE WIND WARNING/i', $data, $matches);
+$tStorm_count = preg_match_all('/\.\.\.TROPICAL STORM WARNING\.\.\./', $data, $matches);
 
-$frzg_count = preg_match_all('/HEAVY FREEZING SPRAY WARNING/i', $data, $matches);
+$hf_count = preg_match_all('/\.\.\.HURRICANE FORCE WIND WARNING\.\.\./', $data, $matches);
+
+$hur_count = preg_match_all('/\.\.\.HURRICANE WARNING\.\.\./', $data, $matches);
+
+$frzg_count = preg_match_all('/HEAVY FREEZING SPRAY WARNING/', $data, $matches);
 
 echo '<table>';
 echo '    <tr>';
@@ -35,12 +39,20 @@ echo '        <th>High Seas Warning Type</th>';
 echo '       <th> Atlantic Count</th>';
 echo '   </tr>';
 echo '    <tr>';
+echo '        <td><a href=' . $url . '>Hurricane Warning</a></td>';
+echo '        <td>' . $hur_count . '</td>';
+echo '    </tr>';
+echo '    <tr>';
 echo '        <td><a href=' . $url . '>Hurricane Force Wind Warning</a></td>';
 echo '        <td>' . $hf_count . '</td>';
 echo '    </tr>';
 echo '    <tr>';
 echo '        <td><a href=' . $url . '>Storm Warning</a></td>';
 echo '        <td>' . $storm_count . '</td>';
+echo '    </tr>';
+echo '    <tr>';
+echo '        <td><a href=' . $url . '>Tropical Storm Warning</a></td>';
+echo '        <td>' . $tStorm_count . '</td>';
 echo '    </tr>';
 echo '    <tr>';
 echo '        <td><a href=' . $url . '>Gale Warning</a></td></td>';
