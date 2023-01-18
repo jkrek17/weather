@@ -12,7 +12,7 @@ echo '    td,';
 echo '    th {';
 echo '        border: 1px solid #dddddd;';
 echo '        text-align: left;';
-echo '        padding: 8px;';
+echo '        padding: 4px;';
 echo '    }';
 
 echo '    tr:nth-child(even) {';
@@ -25,8 +25,8 @@ $urls = ['https://ocean.weather.gov/shtml/NFDHSFEP1.php', 'https://ocean.weather
 echo '<table>';
 echo '    <tr>';
 echo '        <th>High Seas Warning Type</th>';
-echo '        <th><a href=' . $urls[1] . '>Atlantic Count</a></th>';
-echo '        <th><a href=' . $urls[0] . '>Pacific Count</a></th>';
+echo '        <th style="text-align:center;"><a href=' . $urls[1] . '>Atlantic Count</a></th>';
+echo '        <th style="text-align:center;"><a href=' . $urls[0] . '>Pacific Count</a></th>';
 echo '    </tr>';
 
 $gale_atlantic = 0;
@@ -62,33 +62,33 @@ foreach ($urls as $url) {
 }
 echo '    <tr>';
 echo '        <td>Hurricane Warning</td>';
-echo '        <td>' . $hur_atlantic . '</td>';
-echo '        <td>' . $hur_pacific . '</td>';
+echo '        <td style="text-align:center;">' . $hur_atlantic . '</td>';
+echo '        <td style="text-align:center;">' . $hur_pacific . '</td>';
 echo '    </tr>';
 echo '    <tr>';
 echo '        <td>Hurricane Force Wind Warning</td>';
-echo '        <td>' . $hf_atlantic . '</td>';
-echo '        <td>' . $hf_pacific . '</td>';
+echo '        <td style="text-align:center;">' . $hf_atlantic . '</td>';
+echo '        <td style="text-align:center;">' . $hf_pacific . '</td>';
 echo '    </tr>';
 echo '    <tr>';
 echo '        <td>Storm Warning</td>';
-echo '        <td>' . $storm_atlantic . '</td>';
-echo '        <td>' . $storm_pacific . '</td>';
+echo '        <td style="text-align:center;">' . $storm_atlantic . '</td>';
+echo '        <td style="text-align:center;">' . $storm_pacific . '</td>';
 echo '    </tr>';
 echo '    <tr>';
 echo '        <td>Tropical Storm Warning</td>';
-echo '        <td>' . $tStorm_atlantic . '</td>';
-echo '        <td>' . $tStorm_pacific . '</td>';
+echo '        <td style="text-align:center;">' . $tStorm_atlantic . '</td>';
+echo '        <td style="text-align:center;">' . $tStorm_pacific . '</td>';
 echo '    </tr>';
 echo '    <tr>';
 echo '        <td>Gale Warning</td>';
-echo '        <td>' . $gale_atlantic . '</td>';
-echo '        <td>' . $gale_pacific . '</td>';
+echo '        <td style="text-align:center;">' . $gale_atlantic . '</td>';
+echo '        <td style="text-align:center;">' . $gale_pacific . '</td>';
 echo '    </tr>';
 echo '    <tr>';
 echo '        <td>Heavy Freezing Spray Warning</td>';
-echo '        <td>' . $frzg_atlantic . '</td>';
-echo '        <td>' . $frzg_pacific . '</td>';
+echo '        <td style="text-align:center;">' . $frzg_atlantic . '</td>';
+echo '        <td style="text-align:center;">' . $frzg_pacific . '</td>';
 echo '    </tr>';
 echo '</table>';
 ?>
