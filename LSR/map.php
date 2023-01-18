@@ -8,7 +8,7 @@
     <style>
         #map {
             width: 900px;
-            height: 800px;
+            height: 700px;
         }
     </style>
 </head>
@@ -44,6 +44,12 @@
         $report['text'] = "<pre>" . $feature->properties->city . "\n" . $feature->properties->typetext . "\n" . $feature->properties->magnitude . "</pre>";
         array_push($reports, $report);
     }
+
+    // sort the array by magnitude
+    usort($reports, function ($a, $b) {
+        return $b['mag'] <=> $a['mag'];
+    });
+
 
     // Create Leaflet map
     $mapDiv = "<div id='map'></div>";
