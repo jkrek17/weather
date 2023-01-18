@@ -19,7 +19,8 @@ echo '        background-color: #dddddd;';
 echo '    }';
 echo '</style>';
 
-$url = 'https://ocean.weather.gov/shtml/NFDHSFEP1.php';
+$urls = ['https://ocean.weather.gov/shtml/NFDHSFEP1.php', 'https://ocean.weather.gov/shtml/NFDHSFAT1.php'];
+
 $data = file_get_contents($url);
 $gale_count = preg_match_all('/GALE WARNING/', $data, $matches);
 
