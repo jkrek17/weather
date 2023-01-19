@@ -55,56 +55,56 @@ foreach ($urls as $url) {
     if (strpos($url, 'NFDHSFEP1.php') !== false) {
         $gale_pacific = preg_match_all('/GALE WARNING/', $data);
         $storm_pacific = preg_match_all('/STORM WARNING/', $data);
-        $tStorm_pacific = preg_match_all('/\.\.\.TROPICAL STORM WARNING\.\.\./', $data);
-        $hf_pacific = preg_match_all('/\.\.\.HURRICANE FORCE WIND WARNING\.\.\./', $data);
-        $hur_pacific = preg_match_all('/\.\.\.HURRICANE WARNING\.\.\./', $data);
+        $tStorm_pacific = preg_match_all('/TROPICAL STORM WARNING/', $data);
+        $hf_pacific = preg_match_all('/HURRICANE FORCE WIND WARNING/', $data);
+        $hur_pacific = preg_match_all('/HURRICANE WARNING/', $data);
         $frzg_pacific = preg_match_all('/HEAVY FREEZING SPRAY WARNING/', $data);
     } else {
         $gale_atlantic = preg_match_all('/GALE WARNING/', $data);
         $storm_atlantic = preg_match_all('/STORM WARNING/', $data);
-        $tStorm_atlantic = preg_match_all('/\.\.\.TROPICAL STORM WARNING\.\.\./', $data);
-        $hf_atlantic = preg_match_all('/\.\.\.HURRICANE FORCE WIND WARNING\.\.\./', $data);
-        $hur_atlantic = preg_match_all('/\.\.\.HURRICANE WARNING\.\.\./', $data);
+        $tStorm_atlantic = preg_match_all('/TROPICAL STORM WARNING/', $data);
+        $hf_atlantic = preg_match_all('/HURRICANE FORCE WIND WARNING/', $data);
+        $hur_atlantic = preg_match_all('/HURRICANE WARNING/', $data);
         $frzg_atlantic = preg_match_all('/HEAVY FREEZING SPRAY WARNING/', $data);
     }
 }
 echo '<table>';
-if ($hur_atlantic != 0 && $hur_pacific != 0) {
+if ($hur_atlantic != 0 || $hur_pacific != 0) {
     echo '    <tr>';
     echo '        <td>Hurricane Warning</td>';
     echo '        <td >' . $hur_atlantic . '</td>';
     echo '        <td >' . $hur_pacific . '</td>';
     echo '    </tr>';
 }
-if ($hf_atlantic != 0 && $hf_pacific != 0) {
+if ($hf_atlantic != 0 || $hf_pacific != 0) {
     echo '    <tr>';
     echo '        <td>Hurricane Force Wind Warning</td>';
     echo '        <td >' . $hf_atlantic . '</td>';
     echo '        <td >' . $hf_pacific . '</td>';
     echo '    </tr>';
 }
-if ($storm_atlantic != 0 && $storm_pacific != 0) {
+if ($storm_atlantic != 0 || $storm_pacific != 0) {
     echo '    <tr>';
     echo '        <td>Storm Warning</td>';
     echo '        <td >' . $storm_atlantic . '</td>';
     echo '        <td >' . $storm_pacific . '</td>';
     echo '    </tr>';
 }
-if ($tStorm_atlantic != 0 && $tStorm_pacific != 0) {
+if ($tStorm_atlantic != 0 || $tStorm_pacific != 0) {
     echo '    <tr>';
     echo '        <td>Tropical Storm Warning</td>';
     echo '        <td >' . $tStorm_atlantic . '</td>';
     echo '        <td >' . $tStorm_pacific . '</td>';
     echo '    </tr>';
 }
-if ($gale_atlantic != 0 && $gale_pacific != 0) {
+if ($gale_atlantic != 0 || $gale_pacific != 0) {
     echo '    <tr>';
     echo '        <td>Gale Warning</td>';
     echo '        <td >' . $gale_atlantic . '</td>';
     echo '        <td >' . $gale_pacific . '</td>';
     echo '    </tr>';
 }
-if ($frzg_atlantic != 0 && $frzg_pacific != 0) {
+if ($frzg_atlantic != 0 || $frzg_pacific != 0) {
     echo '    <tr>';
     echo '        <td>Heavy Freezing Spray Warning</td>';
     echo '        <td >' . $frzg_atlantic . '</td>';

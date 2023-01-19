@@ -11,9 +11,6 @@
     <script src="https://unpkg.com/mapbox-gl-leaflet/leaflet-mapbox-gl.js"></script>
     <script src="NFL/createIcons.js"></script>
 
-
-
-
     <style>
         .leaflet-control {
             background-color: lightgrey;
