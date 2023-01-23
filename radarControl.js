@@ -101,7 +101,7 @@ function backward(y) {
 
 var RadarControl = L.Control.extend({
     options: {
-        position: 'topright'
+        position: 'bottomleft'
     },
 
     onAdd: function(map) {
@@ -135,7 +135,6 @@ var RadarControl = L.Control.extend({
 });
 
 var radarControl = new RadarControl(map);
-radarControl.setPosition('bottomleft');
 map.addControl(radarControl);
 
 

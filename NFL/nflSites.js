@@ -18,6 +18,7 @@ $.getJSON("NFL/stadiums.geojson", function(data) {
 var tempIcons = new L.LayerGroup();
 var windIcons = new L.LayerGroup();
 var precipIcons = new L.LayerGroup();
+var factorIcons = new L.LayerGroup();
 
 function dropDownChange() {
 
@@ -33,6 +34,9 @@ function dropDownChange() {
     if (map.hasLayer(precipIcons)) {
         map.removeLayer(precipIcons);
     }
+    if (map.hasLayer(factorIcons)) {
+        map.removeLayer(factorIcons);
+    }
 
     
     switch(true){
@@ -45,6 +49,9 @@ function dropDownChange() {
             break;
         case dropdownSelection == "Rain/Snow":
             map.addLayer(precipIcons);
+            break;
+        case dropdownSelection == "weather":
+            map.addLayer(factorIcons);
             break;
     }
 }
@@ -76,6 +83,7 @@ function getWeather(lat,lon){
         .then(response => response.json())
         .then(data => {
 
+            var weather_factor = 0;
 
             feelsLike = parseInt(data.main.feels_like);
             //console.log(feelsLike);
@@ -83,18 +91,23 @@ function getWeather(lat,lon){
             switch(true){
 
                 case feelsLike >= 80:
+                    temp_factor = 1;
                     L.marker([lat,lon],{icon:createIcon("orange", "black", "1")}).bindPopup("Feels Like: " + feelsLike).addTo(tempIcons);
                     break;
                 case feelsLike < 80 && feelsLike > 40:
+                    temp_factor = 0;
                     L.marker([lat,lon],{icon:createIcon("green", "black", "1")}).bindPopup("Feels Like: " + feelsLike).addTo(tempIcons);
                     break;
-                case feelsLike <= 40 && feelsLike > 20:
+                case feelsLike <= 40 && feelsLike > 32:
+                    temp_factor = 1;
                     L.marker([lat,lon],{icon:createIcon("blue", "black", "1")}).bindPopup("Feels Like: " + feelsLike).addTo(tempIcons);
                     break;
-                case feelsLike <= 20:
+                case feelsLike <= 32:
+                    temp_factor = 2;
                     L.marker([lat,lon],{icon:createIcon("lightblue", "black", "1")}).bindPopup("Feels Like: " + feelsLike).addTo(tempIcons);
                     break;
                 default :
+                    temp_factor = 2;
                     L.marker([lat,lon],{icon:createIcon("grey", "black", "1")}).bindPopup("Feels Like: " + feelsLike).addTo(tempIcons);
             }
 
@@ -104,42 +117,71 @@ function getWeather(lat,lon){
             switch(true){
 
                 case windSpeed > 30:
+                    wind_factor = 3;
                     L.marker([lat,lon],{icon:createIcon("red", "black", "1")}).bindPopup("Wind Gusts: " + windSpeed).addTo(windIcons);
                     break;
                 case windSpeed <= 30 && windSpeed > 20:
+                    wind_factor = 2;
                     L.marker([lat,lon],{icon:createIcon("orange", "black", "1")}).bindPopup("Wind Gusts: " + windSpeed).addTo(windIcons);
                     break;
                 case windSpeed <= 20 && windSpeed > 10:
+                    wind_factor = 1;
                     L.marker([lat,lon],{icon:createIcon("yellow", "black", "1")}).bindPopup("Wind Gusts: " + windSpeed).addTo(windIcons);
                     break;
                 case windSpeed <= 10:
+                    wind_factor = 0;
                     L.marker([lat,lon],{icon:createIcon("green", "black", "1")}).bindPopup("Wind Gusts: " + windSpeed).addTo(windIcons);
                     break;
                 default :
+                    wind_factor = 0;
                     L.marker([lat,lon],{icon:createIcon("grey", "black", "1")}).bindPopup("Wind Gusts: " + windSpeed).addTo(windIcons);
             }
 
 
             weather = data.weather[0].main;
-            console.log(weather);
+            //console.log(weather);
 
             switch(weather){
 
                 case "Rain":
                 case "Thunderstorm":
-                    L.marker([lat,lon],{icon:createIcon("red", "black", "1")}).bindPopup("Weather: " + weather).addTo(precipIcons);
+                    precip_factor = 1;
+                    L.marker([lat,lon],{icon:createIcon("orange", "black", "1")}).bindPopup("Weather: " + weather).addTo(precipIcons);
                     break;
                 case "Snow":
-                    L.marker([lat,lon],{icon:createIcon("blue", "black", "1")}).bindPopup("Weather: " + weather).addTo(precipIcons);
+                    precip_factor = 1;
+                    L.marker([lat,lon],{icon:createIcon("orange", "black", "1")}).bindPopup("Weather: " + weather).addTo(precipIcons);
                     break;
                 case "Clear" :
                 case "Clouds" :
+                    precip_factor = 0;
                     L.marker([lat,lon],{icon:createIcon("green", "black", "1")}).bindPopup("Weather: " + weather).addTo(precipIcons);
                     break;
                 default :
+                    precip_factor = 0;
                     L.marker([lat,lon],{icon:createIcon("grey", "black", "1")}).bindPopup("Weather: " + weather).addTo(precipIcons);
             }
 
+            weather_factor = temp_factor + wind_factor + precip_factor;
+            console.log([lat,lon], weather_factor);
+
+            switch(true){
+
+                case weather_factor >= 4:
+                    L.marker([lat,lon],{icon:createIcon("red", "black", "1")}).bindPopup("Weather Factor: " + weather_factor).addTo(factorIcons);
+                    break;
+                case weather_factor >= 3 && weather_factor < 4:
+                    L.marker([lat,lon],{icon:createIcon("orange", "black", "1")}).bindPopup("Weather Factor: " + weather_factor).addTo(factorIcons);
+                    break;
+                case weather_factor >= 2 && weather_factor < 3:
+                    L.marker([lat,lon],{icon:createIcon("yellow", "black", "1")}).bindPopup("Weather Factor: " + weather_factor).addTo(factorIcons);
+                    break;
+                case weather_factor >= 0 && weather_factor < 2:
+                    L.marker([lat,lon],{icon:createIcon("green", "black", "1")}).bindPopup("Weather Factor: " + weather_factor).addTo(factorIcons);
+                    break;
+                default :
+                    L.marker([lat,lon],{icon:createIcon("grey", "black", "1")}).bindPopup("Weather Factor: " + weather_factor).addTo(factorIcons);
+            }
             map.addLayer(tempIcons);
             //console.log(data);
            // L.marker([lat,lon],{icon:createRainIcon("#6E3192", "black", "2")}).addTo(rain_markers)
@@ -149,7 +191,7 @@ function getWeather(lat,lon){
 var nflControl = L.Control.extend({
     onAdd: function (map) {
         var select = L.DomUtil.create('select', 'my-control');
-        select.innerHTML = '<option value="Temp">Temp</option><option value="Wind">Wind</option><option value="Rain/Snow">Rain/Snow</option>';
+        select.innerHTML = '<option value="Temp">Temp</option><option value="Wind">Wind</option><option value="Rain/Snow">Rain/Snow</option><option value="weather">Weather Factor</option>';
         select.onchange = function () {
             dropDownChange();
         };
