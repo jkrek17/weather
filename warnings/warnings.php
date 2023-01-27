@@ -28,7 +28,7 @@ echo '        background-color: #BBC9DA;';
 echo '    }';
 echo '</style>';
 
-$urls = ['https://ocean.weather.gov/shtml/NFDHSFEP1.php', 'https://ocean.weather.gov/shtml/NFDHSFAT1.php'];
+$urls = array('https://ocean.weather.gov/shtml/NFDHSFEP1.php', 'https://ocean.weather.gov/shtml/NFDHSFAT1.php');
 
 echo '<table>';
 echo '    <tr>';

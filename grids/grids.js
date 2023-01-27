@@ -1,13 +1,39 @@
+
+var opts = {
+    lines: 15, // The number of lines to draw
+    length: 50, // The length of each line
+    width: 10, // The line thickness
+    radius: 50, // The radius of the inner circle
+    color: 'blue', // The color of the lines
+    speed: 1, // The rotation speed
+    trail: 100, // Afterglow percentage
+    shadow: true, // Enable the shadow option
+    className: 'spinner', // The CSS class to assign to the spinner
+  };
+  var target = document.getElementById('loading');
+  var spinner = new Spinner(opts)
+ 
+
 let displayTime = [];
 var ndfd = new L.LayerGroup();
 var ndfd_points = new L.LayerGroup();
 var currentIndex = 0;
 let intervalId;
+var refresh = 500;
+var increment = 0;
 
-var map = L.map('map').setView([40, -95], 5);
+var map = L.map('map').setView([40, -95], 4);
 var oceanmap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}', {
     maxZoom: 13
 }).addTo(map);
+
+map.on('contextmenu', function(e) {
+    e.preventDefault();
+});
+
+map.on('preclick', function(e) {
+    e.preventDefault();
+});
 
 $.getJSON("states.geojson", function(data) {
     var geojson = L.geoJson(data, {
@@ -125,6 +151,7 @@ function plotLayers(time, grid, points) {
 
     ndfd.clearLayers();
     ndfd_points.clearLayers();
+    spinner.spin(document.getElementById("loading"));
 
     for (var i = 0; i < time.length; i++) {
         console.log(time[i]);
@@ -155,54 +182,41 @@ function changeImage() {
         }
     }
 
-    currentIndex++;
-
-    if (currentIndex === ndfdLayers.length) {
+    if (currentIndex === ndfdLayers.length-1) {
         currentIndex = 0;
+        spinner.stop();
     }
 }
 
 function play() {
+    currentIndex = 0;
     clearInterval(intervalId);
-    intervalId = setInterval(changeImage, 800);
+    intervalId = setInterval(goForward, refresh);
 }
 
 function pause() {
+    spinner.stop();
     clearInterval(intervalId);
 }
 
-function goBack() {
-
-    if (currentIndex === undefined) {
-        currentIndex = 0;
-    }
-    currentIndex--;
-    var ndfdLayers = ndfd.getLayers();
-    var pointsLayers = ndfd_points.getLayers();
-
-    for (var i = 0; i < ndfdLayers.length; i++) {
-        if (i === currentIndex) {
-            ndfdLayers[i].setOpacity(0.8);
-            pointsLayers[i].setOpacity(1);
-            pointsLayers[i].bringToFront();
-        } else {
-            ndfdLayers[i].setOpacity(0);
-            pointsLayers[i].setOpacity(0);
-        }
-    }
+function goBack(increment) {
+    if (increment === undefined){increment = -1;}
+    currentIndex += increment;
+    changeImage();
     if (currentIndex < 0) {
-        currentIndex = ndfdLayers.length - 1;
+        currentIndex = ndfd.getLayers().length - 1;
     }
 }
 
-function goForward() {
-    pause();
-    currentIndex++;
+function goForward(increment) {
+    if (increment === undefined){increment = 1;}
+    currentIndex += increment;
+    changeImage();
     if (currentIndex >= ndfd.getLayers().length) {
         currentIndex = 0;
     }
-    changeImage();
 }
+
 
 function dropDownChange() {
 
@@ -228,17 +242,17 @@ function dropDownChange() {
 
 var gridControl = L.Control.extend({
     options: {
-        position: 'bottomleft'
+        position: 'topright'
     },
     onAdd: function(map) {
-        var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
-        container.style.padding = '8px';
+        var container = L.DomUtil.create('div', 'custom-control');
 
-        var label = L.DomUtil.create('label', '', container);
+        L.DomEvent.disableClickPropagation(container);
+
+        var dropRow = L.DomUtil.create('div', 'custom-div', container);
+        var label = L.DomUtil.create('label', 'custom-label', dropRow);
         label.innerHTML = 'Grid Selection:';
-
-        var select = L.DomUtil.create('select', '', container);
-        //select.style.padding = '8px';
+        var select = L.DomUtil.create('select', 'custom-select', dropRow);
         select.innerHTML = '<option value="Waves">Waves</option>' +
             '<option value="Wind">Wind</option>' +
             '<option value="Hazards">Hazards</option>';
@@ -246,30 +260,63 @@ var gridControl = L.Control.extend({
             dropDownChange();
         };
 
-        var buttonRow = L.DomUtil.create('div', 'buttons-container', container);
-        var backButton = L.DomUtil.create('button', '', buttonRow);
+        var buttonRow = L.DomUtil.create('div', 'button-row', container);
+        var backButton = L.DomUtil.create('button', 'button', buttonRow);
         backButton.innerHTML = 'back';
         backButton.onclick = function() {
-            goBack();
+            pause();
+            goBack(-1);
         };
-        var forwardButton = L.DomUtil.create('button', '', buttonRow);
-        forwardButton.innerHTML = 'forward';
-        forwardButton.onclick = function() {
-            goForward();
-        };
-        var pauseButton = L.DomUtil.create('button', '', buttonRow);
+        var pauseButton = L.DomUtil.create('button', 'button', buttonRow);
         pauseButton.innerHTML = 'pause';
         pauseButton.onclick = function() {
             pause();
         };
-        var playButton = L.DomUtil.create('button', '', buttonRow);
+        var playButton = L.DomUtil.create('button', 'button', buttonRow);
         playButton.innerHTML = 'play';
         playButton.onclick = function() {
-            intervalId = setInterval(play, 1000);
+            intervalId = setInterval(goForward, refresh);
+        };
+        var forwardButton = L.DomUtil.create('button', 'button', buttonRow);
+        forwardButton.innerHTML = 'forward';
+        forwardButton.onclick = function() {
+            pause();
+            goForward(1);
         };
 
+        var sliderContainer = L.DomUtil.create('div', 'slider-container', container);
+        var wrapper = L.DomUtil.create('div','label-wrapper', sliderContainer)
+        var speedLabel = L.DomUtil.create('label', 'custom-label', wrapper);
+        speedLabel.innerHTML = 'Speed:';
+
+        var speedInput = L.DomUtil.create('input', 'slider', sliderContainer);
+        speedInput.type = 'range';
+        speedInput.min = 1;
+        speedInput.max = 10;
+        speedInput.value = 5;
+        speedInput.oninput = function() {
+            // Set a minimum and maximum speed in miliseconds
+            var minSpeed = 100; // 1 second
+            var maxSpeed = 1000; // 0.1 seconds
+
+            // Get the current slider value
+            slider_value = this.value
+
+            // Calculate the speed using the formula:
+            // speed = maxSpeed + (minSpeed - maxSpeed) * (sliderValue / 10)
+            refresh = maxSpeed + (minSpeed - maxSpeed) * (slider_value/10);
+            console.log(refresh);
+            play();
+        };
+        speedLabel.innerHTML = 'Speed: ' + (refresh/100);
+        speedInput.addEventListener('input', function() {
+            speedLabel.innerHTML = 'Speed: ' + this.value;
+         });
+
+
         // Create time display element
-        var timeDisplay = L.DomUtil.create('p', 'time-display', container);
+        var timeContainer = L.DomUtil.create('div', 'time-container', container);
+        var timeDisplay = L.DomUtil.create('p', 'time-display', timeContainer);
         timeDisplay.innerHTML = 'Time: ';
 
         return container;
@@ -281,6 +328,8 @@ map.addControl(gridControl);
 // Functions to run on page load
 dropDownChange();
 play();
+
+// Fire events and listeners  /////////////////////////////////////////////////////////////////////
 
 document.addEventListener("keyup", function(event) {
     if (event.code === "ArrowLeft") {
@@ -328,3 +377,8 @@ function changeDropdownDown() {
         dropDownChange();
     }
 }
+// Fire events and listeners end /////////////////////////////////////////////////////////////////////
+
+$(document).ready(function(){
+    alert("Please be patient. Data will take a minute or two to load.");
+});
