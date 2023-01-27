@@ -1,6 +1,6 @@
 
 
-$.getJSON("NFL/stadiums.geojson", function(data) {
+$.getJSON("data/stadiums.geojson", function(data) {
     var geojson = L.geoJson(data);
 
     geojson.getLayers().forEach(function(layer) {

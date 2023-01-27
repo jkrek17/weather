@@ -21,6 +21,7 @@ var currentIndex = 0;
 let intervalId;
 var refresh = 500;
 var increment = 0;
+var time_steps = 12;
 
 var map = L.map('map').setView([40, -95], 4);
 var oceanmap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}', {
@@ -35,7 +36,7 @@ map.on('preclick', function(e) {
     e.preventDefault();
 });
 
-$.getJSON("states.geojson", function(data) {
+$.getJSON("data/states.geojson", function(data) {
     var geojson = L.geoJson(data, {
         style: function(feature) {
             return {
@@ -62,7 +63,7 @@ function getLayers() {
     // Add the nearest multiple to the current time to get the starting time in UTC
     var startTime = new Date(Date.UTC(currentTime.getUTCFullYear(), currentTime.getUTCMonth(), currentTime.getUTCDate(), currentTime.getUTCHours() + nearestMultiple, 0, 0));
 
-    for (var i = 0; i < 12; i++) {
+    for (var i = 0; i < time_steps; i++) {
         var date = new Date(startTime.getTime() + (i * (6 * 3600 * 1000)));
         var year = date.getUTCFullYear();
         var month = (1 + date.getUTCMonth()).toString().padStart(2, '0');
