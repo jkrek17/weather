@@ -17,6 +17,7 @@ var opts = {
 let displayTime = [];
 var ndfd = new L.LayerGroup();
 var ndfd_points = new L.LayerGroup();
+var ndfdLayers = 0;
 var currentIndex = 0;
 let intervalId;
 var refresh = 500;
@@ -165,7 +166,7 @@ function plotLayers(time, grid, points) {
 
 function changeImage() {
 
-    var ndfdLayers = ndfd.getLayers();
+    ndfdLayers = ndfd.getLayers();
     var pointsLayers = ndfd_points.getLayers();
     // Get time display element
     var timeDisplay = document.querySelector('.time-display');
@@ -185,7 +186,6 @@ function changeImage() {
 
     if (currentIndex === ndfdLayers.length-1) {
         currentIndex = 0;
-        spinner.stop();
     }
 }
 
@@ -382,4 +382,10 @@ function changeDropdownDown() {
 
 $(document).ready(function(){
     alert("Please be patient. Data will take a minute or two to load.");
+});
+
+// Listen for the "load" event on the window object
+window.addEventListener("load", function() {
+    // Stop the spinner
+    spinner.stop();
 });
